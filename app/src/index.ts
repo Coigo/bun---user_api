@@ -1,17 +1,25 @@
-import { file } from "bun";
-import { Elysia,  } from "elysia";
+import CreateUser from "./user/application/CreateUser";
+import LoginUser from "./user/application/LoginUser";
+import UserCollection from "./user/repository/UserColection";
+import Crypto from "./user/application/CryptoPassword";
 
-const app = new Elysia()
 
-app.get('/', () => {
-  return file('./src/index.html')
+
+const create = new CreateUser(new Crypto, new UserCollection)
+await create.handle({
+  email:'eumesmo@sim.com',
+  username:'aaaa',
+  password:'aaaa'
 })
 
 
-app.listen(3000, () => {
-  console.log(
-    `🦊 Elysia is running at ${app.server?.hostname}:${app.server?.port}`
-  );
+const login = new LoginUser(new Crypto, new UserCollection)
+const user = await login.handle({
+  email:'eumesmo@sim.com',
+  password:'aaaa'
 })
+
+
+console.log(user);
 
 
