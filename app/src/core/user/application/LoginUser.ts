@@ -3,7 +3,7 @@ import UseCase from "../../shared/UseCase";
 import { CryptoPassword } from "../domain/CryptoPasswordProvider";
 import User from "../domain/User";
 import { UsersRepository } from "../domain/UsersRepository";
-import UserCollection from "../repository/UserColection";
+import UserCollection from "../adapters/repository/UserColection";
 
 type loginUser = {
     password:string
@@ -21,11 +21,10 @@ export default class LoginUser implements UseCase<loginUser, User | undefined  >
     }
 
     async handle(dto: loginUser): Promise<User | undefined> {
-        console.log('-----------------Login User-----------------');
         const user = await this.usersCollection.findByEmail(dto.email)
-        console.log('começo do login:', user);
+        console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa------------ ta aqui porra me olha',user)
         
-        if ( !user?.password  ) return 
+        if ( !user?.password  ) return undefined
         
         const isPasswordEqual = await this.crypto.compare(dto.password, user.password)
         console.log(isPasswordEqual)

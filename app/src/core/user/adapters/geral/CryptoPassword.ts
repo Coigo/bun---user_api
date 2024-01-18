@@ -1,5 +1,5 @@
 
-import { CryptoPassword } from "../domain/CryptoPasswordProvider";
+import { CryptoPassword } from "../../domain/CryptoPasswordProvider";
 
 export default class Crypto implements CryptoPassword {
 

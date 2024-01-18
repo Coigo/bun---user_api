@@ -1,7 +1,7 @@
-import CreateUser from "./user/application/CreateUser";
-import LoginUser from "./user/application/LoginUser";
-import UserCollection from "./user/repository/UserColection";
-import Crypto from "./user/application/CryptoPassword";
+import CreateUser from "./core/user/application/CreateUser";
+import LoginUser from "./core/user/application/LoginUser";
+import UserCollection from "./core/user/adapters/repository/UserColection";
+import Crypto from "./core/user/adapters/geral/CryptoPassword";
 
 
 
@@ -15,7 +15,7 @@ await create.handle({
 
 const login = new LoginUser(new Crypto, new UserCollection)
 const user = await login.handle({
-  email:'eumesmo@sim.com',
+  email:'eaaaaaaaaaaaaaaumesmo@sim.com',
   password:'aaaa'
 })
 

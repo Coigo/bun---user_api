@@ -1,5 +1,5 @@
-import User from "../domain/User";
-import { UsersRepository } from "../domain/UsersRepository";
+import User from "../../domain/User";
+import { UsersRepository } from "../../domain/UsersRepository";
 
 export default class UserCollection implements UsersRepository{
 
@@ -16,7 +16,13 @@ export default class UserCollection implements UsersRepository{
 
         console.log('eu to aqui em cima', email);
         
-        return UserCollection.users.find(user => user.email = email)
+        return UserCollection.users.find(user => user.email === email)
+    }
+
+    public async clear () {
+        while (UserCollection.users.length > 0) {
+            UserCollection.users.pop();
+          }
     }
 
 }
