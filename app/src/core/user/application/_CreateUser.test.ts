@@ -3,6 +3,7 @@ import CreateUser from './CreateUser'
 import Crypto from '../adapters/geral/CryptoPassword'
 import UserCollection from '../adapters/repository/UserColection'
 import { error } from '../../shared/Errors'
+import UserRepository from '../adapters/repository/UserRepository'
 
 
 

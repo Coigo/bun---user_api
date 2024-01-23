@@ -15,7 +15,6 @@ export default class UserCollection implements UsersRepository{
     async findByEmail (email: string): Promise< User| undefined> {
 
         console.log('eu to aqui em cima', email);
-        
         return UserCollection.users.find(user => user.email === email)
     }
 

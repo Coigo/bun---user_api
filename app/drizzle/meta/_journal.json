@@ -1,0 +1,13 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "5",
+      "when": 1705932331145,
+      "tag": "0000_aberrant_franklin_storm",
+      "breakpoints": true
+    }
+  ]
+}
