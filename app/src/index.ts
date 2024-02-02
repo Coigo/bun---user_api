@@ -1,25 +1,10 @@
-import CreateUser from "./core/user/application/CreateUser";
-import LoginUser from "./core/user/application/LoginUser";
-import UserCollection from "./core/user/adapters/repository/UserColection";
-import Crypto from "./core/user/adapters/geral/CryptoPassword";
+import Elysia from "elysia";
+import routes from "./routes";
 
+const app = new Elysia()
 
+app.use(routes)
 
-const create = new CreateUser(new Crypto, new UserCollection)
-await create.handle({
-  email:'eumesmo@sim.com',
-  username:'aaaa',
-  password:'aaaa'
+app.listen(3003, () => {
+  console.log('Server is running at port 3003');
 })
-
-
-const login = new LoginUser(new Crypto, new UserCollection)
-const user = await login.handle({
-  email:'eaaaaaaaaaaaaaaumesmo@sim.com',
-  password:'aaaa'
-})
-
-
-console.log(user);
-
-

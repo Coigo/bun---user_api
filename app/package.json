@@ -4,8 +4,8 @@
   "scripts": {
     "test": "vitest",
     "dev": "clear | bun run --watch src/index.ts ",
-    "migration:generate":"drizzle-kit generate:pg --schema=./src/infrastructure/schema/schema.ts",
-    "migration:push":"bun run ./src/infrastructure/migrate"
+    "migration:generate": "drizzle-kit generate:pg --schema=./src/infrastructure/schema/schema.ts",
+    "migration:push": "bun run ./src/infrastructure/migrate"
   },
   "dependencies": {
     "@neondatabase/serverless": "^0.7.2",
@@ -13,6 +13,7 @@
     "drizzle-orm": "^0.29.3",
     "drizzle-zod": "^0.5.1",
     "elysia": "latest",
+    "nodemailer": "^6.9.8",
     "pg": "^8.11.3",
     "postgres": "^3.4.3"
   },
