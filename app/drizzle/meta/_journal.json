@@ -8,6 +8,20 @@
       "when": 1706707351463,
       "tag": "0000_slim_shooting_star",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1707069541447,
+      "tag": "0001_unusual_jamie_braddock",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1707069768005,
+      "tag": "0002_material_fat_cobra",
+      "breakpoints": true
     }
   ]
 }

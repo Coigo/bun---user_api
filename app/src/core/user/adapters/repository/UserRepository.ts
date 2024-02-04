@@ -28,13 +28,13 @@ export default class UserRepository implements UsersRepository {
         return user[0]
     }
 
-    public async saveToken ({email, linkToken}: saveTokenType) {
+    public async saveToken ({email, token}: saveTokenType) {
         try {
             await db.insert(loginTokens).values({
-                id: linkToken,
+                token,
                 email,
             })
-            return {email, linkToken}
+            return {email, token}
         }
         catch (err) {
             console.log(err);
@@ -43,17 +43,30 @@ export default class UserRepository implements UsersRepository {
 
     public async findToken (token: string) {
         const loginToken = await db.select({
-            token: loginTokens.id,
+            token: loginTokens.token,
             email: loginTokens.email,
-            createdAt: loginTokens.createdAt
+            createdAt: loginTokens.createdAt,
+            valid: loginTokens.valid
 
         })
         .from(loginTokens)
-        .where(eq(loginTokens.id, token))
+        .where(eq(loginTokens.token, token))
         
         if ( !loginToken[0] ) return
-        return loginToken[0]
+        return {
+            ...loginToken[0],
+            valid: Number(loginToken[0].valid)
+        }
     }
     
+    public async deleteUsedToken (token: string) {
+        
+        await db.update(loginTokens)
+            .set({ valid:'0' })
+            .where(eq(loginTokens.valid, token))
+
+        return token    
+    } 
+
 }
 

@@ -1,4 +1,4 @@
-import { PgTable, pgTable, varchar, serial, timestamp, uuid } from "drizzle-orm/pg-core";
+import { PgTable, pgTable, varchar, serial, timestamp, uuid, numeric, PgNumeric } from "drizzle-orm/pg-core";
 
 export const users = pgTable('users', {
     id: serial('id').primaryKey(),
@@ -9,8 +9,9 @@ export const users = pgTable('users', {
 })
 
 export const loginTokens = pgTable('login_tokens', {
-    id: uuid('uuid').primaryKey(),
+    token: uuid('uuid').primaryKey().notNull(),
     email: varchar('email').notNull(),
-    createdAt: timestamp('created_at').defaultNow(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    valid: numeric('valid').default('1').notNull()
     
 })

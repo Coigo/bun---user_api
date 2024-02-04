@@ -1,12 +1,12 @@
 import UseCase from "../../shared/UseCase";
-import { CryptoPassword } from "../domain/CryptoPasswordProvider";
+
 import User from "../domain/User";
 import { UsersRepository } from "../domain/UsersRepository";
-import UserCollection from "../adapters/repository/UserColection";
+import UserCollection from "../adapters/tmp/tmp_UserRepository";
 import { error } from "../../shared/Errors";
-import { MagicLink } from "../domain/MagicLink";
 import { MailerProvider } from "../domain/Mailer";
 import dotenv from 'dotenv'
+import MagicLink from "../adapters/tmp/tmp_MagicLink";
 
 dotenv.config()
 
@@ -30,7 +30,7 @@ export default class CreateUser implements UseCase<Required<User>, User | error[
 
             await this.usersCollection.saveToken({
                 email: user.email,
-                linkToken: magicLink
+                token: magicLink
             })
             await this.mailer.mailMagicLink({
                 address: user.email,

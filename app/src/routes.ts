@@ -1,5 +1,6 @@
 import Elysia, {t} from "elysia";
 import UserController from "./core/user/adapters/controller/UserController";
+import { jwt } from '@elysiajs/jwt'
 
 const user = new UserController
 

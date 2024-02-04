@@ -1,41 +1,20 @@
 import { expect, expectTypeOf, test, it } from 'vitest'
 import CreateUser from './CreateUser'
-import Crypto from '../adapters/geral/CryptoPassword'
-import UserCollection from '../adapters/repository/UserColection'
+import UserCollection from '../adapters/tmp/tmp_UserRepository'
 import { error } from '../../shared/Errors'
-import UserRepository from '../adapters/repository/UserRepository'
+import MagicLink from '../adapters/tmp/tmp_MagicLink'
+import Mailer from '../adapters/tmp/tmp_Mailer'
+import UserRepository from '../adapters/tmp/tmp_UserRepository'
 
 
 
-it('Should not be possible to create a new user with < 8 length password', async () => {
-    new UserCollection().clear()
-    const create = new CreateUser( new Crypto(), new UserCollection() )
-    
-    const errorExpected = [{
-        message:'Senha inválida.',
-        code: 400
-    }]
-
-    const newUser = {
-        email:'teste@teste.com',
-        username:'user',
-        password:'123'
-    }
- 
-    expect( await create.handle(newUser) )
-        .toEqual(errorExpected)
-        
-
-
-}) 
 it('Should be possible to create a new user', async () => {
     new UserCollection().clear()
-    const create = new CreateUser( new Crypto(), new UserCollection() )
+    const create = new CreateUser( new MagicLink, new Mailer, new UserRepository )
     
     const newUser = {
         email:'teste@teste.com',
-        username:'user',
-        password:'123123123'
+        username:'user'
     }
 
     expect( await create.handle(newUser))
@@ -45,7 +24,7 @@ it('Should be possible to create a new user', async () => {
 
 it('Should not be possible to create two accounts with the same email', async () => {
     new UserCollection().clear()
-    const create = new CreateUser( new Crypto(), new UserCollection() )
+    const create = new CreateUser( new MagicLink, new Mailer, new UserRepository )
     
     const errorExpected: error[] = [{
         message:'Email já utilizado.',
@@ -54,13 +33,11 @@ it('Should not be possible to create two accounts with the same email', async ()
 
     const newUser = {
         email:'teste@teste.com',
-        username:'user',
-        password:'123123123'
+        username:'user'
     }
     await create.handle(newUser)
 
     expect( await create.handle(newUser))
     .toEqual(errorExpected)
-
 
 })

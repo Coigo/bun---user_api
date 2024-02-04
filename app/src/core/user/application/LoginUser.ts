@@ -2,41 +2,42 @@ import { error } from "../../shared/Errors";
 import UseCase from "../../shared/UseCase";
 import { CryptoPassword } from "../domain/CryptoPasswordProvider";
 import User from "../domain/User";
-import { TokenType, UsersRepository } from "../domain/UsersRepository";
-import UserCollection from "../adapters/repository/UserColection";
+import { UsersRepository } from "../domain/UsersRepository";
+import UserCollection from "../adapters/tmp/tmp_UserRepository";
 import { MailerProvider } from "../domain/Mailer";
-import { linkToken } from "../domain/MagicLink";
 import dotenv from 'dotenv'
+import { JwtProvider } from "../domain/Jwt";
+import { TokenType } from "../domain/MagicLink";
 
 dotenv.config()
 
 
-export default class LoginUser implements UseCase<linkToken, User | undefined  > {
+export default class LoginUser implements UseCase<string, string | undefined  > {
 
     private mailer
-    private usersCollection
+    private jwt
+    private usersRepository
 
-    constructor ( mailer: MailerProvider, usersCollection: UsersRepository ) {
+    constructor ( mailer: MailerProvider, usersRepository: UsersRepository, jwt: JwtProvider) {
         this.mailer = mailer
-        this.usersCollection = usersCollection
+        this.usersRepository = usersRepository
+        this.jwt = jwt
+
     }
 
-    async handle(token: linkToken): Promise<User | undefined> {
-        try {
-            const findToken = await this.usersCollection.findToken(token)
+    async handle(token: string): Promise<string | undefined> {
+        try {    
+            const findToken = await this.usersRepository.findToken(token)
             if ( !findToken || !this.isTokenValid(findToken) ) {
-                console.log('nao ta');
-                
                 return
             }
-            const user = await this.usersCollection.findByEmail(findToken.email)
+            const user = await this.usersRepository.findByEmail(findToken.email)
+            
             if ( !user ) {
                 return
             }
-            return { 
-                username: user.username,
-                email: user.email
-            }
+            this.usersRepository.deleteUsedToken(token)
+            return this.jwt.sign(user)
         } 
         catch ( err ) {
             console.log(err);
@@ -44,15 +45,23 @@ export default class LoginUser implements UseCase<linkToken, User | undefined  >
         }
     }
     
-    private isTokenValid (tokenDTO: TokenType| undefined) {
+    private isTokenValid (tokenDTO: TokenType) {
         if ( !tokenDTO || !tokenDTO.createdAt || !tokenDTO.token ) {
             return false
         }
-        const { createdAt } = tokenDTO;
+        const { createdAt, valid } = tokenDTO;
         
         if ( !this.validateTokenLife(createdAt) ) { 
-            console.log('ta salvo');
-            
+            return false
+        }
+        if ( !this.haveTokenBeenUsed(valid) ) {
+            return false
+        }
+        return true
+    }
+
+    private haveTokenBeenUsed (valid: number) {
+        if ( valid === 0 ) {
             return false
         }
         return true
@@ -64,12 +73,7 @@ export default class LoginUser implements UseCase<linkToken, User | undefined  >
         const tokenBirth = new Date(createdAt);
         const minuteDiff = (now.getTime() - tokenBirth.getTime()) / 1000 / 60;
 
-        const tokenMaxLife = Number(process.env.token_max_life)
-
-        console.log(minuteDiff);
-        console.log(tokenMaxLife);
-        
-        
+        const tokenMaxLife = Number(process.env.token_max_life) 
         if ( minuteDiff > tokenMaxLife ) return false
 
         return true

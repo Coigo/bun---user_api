@@ -19,11 +19,14 @@ export default class Mailer implements MailerProvider {
             to: address,
             subject: 'no-reply',
             html: `<h1>oiiiiiiiii<h1/>`
-            }).then((result) => {
+            }).then((result: any) => {
                 console.log(result)
             }).
-            catch((err) => console.log(err))
+            catch((err: any) => {
+                return false
+            })
             return true
+            
     }
 
     public async mailMagicLink ({address, link}: mailRequest) {
@@ -36,11 +39,14 @@ export default class Mailer implements MailerProvider {
         to: address,
         subject: 'no-reply',
         html: `<h1>${link}<h1/>`
-        }).then((result) => {
+        }).then((result: any) => {
             console.log(result)
         }).
-        catch((err) => console.log(err))
+        catch((err: any) => {
+            return false
+        })
         return true
+
 }
 
 
