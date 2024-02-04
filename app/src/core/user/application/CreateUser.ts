@@ -7,15 +7,16 @@ import { error } from "../../shared/Errors";
 import { MailerProvider } from "../domain/Mailer";
 import dotenv from 'dotenv'
 import MagicLink from "../adapters/tmp/tmp_MagicLink";
+import { IMagicLink } from "../domain/MagicLink";
 
 dotenv.config()
 
 export default class CreateUser implements UseCase<Required<User>, User | error[]> {
     private mailer: MailerProvider
-    private magicLink: MagicLink
+    private magicLink: IMagicLink
     private usersCollection: UsersRepository
 
-    constructor ( magicLink: MagicLink, mailer: MailerProvider, usersCollection: UsersRepository ) {
+    constructor ( magicLink: IMagicLink, mailer: MailerProvider, usersCollection: UsersRepository ) {
         this.mailer = mailer
         this.usersCollection = usersCollection
         this.magicLink = magicLink
@@ -26,15 +27,15 @@ export default class CreateUser implements UseCase<Required<User>, User | error[
 
         if ( valid ) {
             await this.usersCollection.create(user)
-            const magicLink = this.magicLink.generateUUID()
+            const token = this.magicLink.generateUUID()
 
             await this.usersCollection.saveToken({
                 email: user.email,
-                token: magicLink
+                token: token
             })
             await this.mailer.mailMagicLink({
                 address: user.email,
-                link: `${process.env.suve_url}/login/${magicLink}`
+                link: `${process.env.suve_url}/login/${token}`
             })
             return user
 
