@@ -14,6 +14,16 @@ routes.post('/create', async ({body}) => user.createUser(body), {
     })
 })
 
-routes.get('/login/:token', ({params: {token}}) => user.login(token))
+routes.post('/login', ( {body: { token } } ) => user.login(token), {
+    body: t.Object({
+        token: t.String(),
+    })
+})
+
+routes.post('/login_request', ({ body: { email } }) => user.loginRequest(email), {
+    body: t.Object({
+        email: t.String()
+    })
+})
 
 export default routes 

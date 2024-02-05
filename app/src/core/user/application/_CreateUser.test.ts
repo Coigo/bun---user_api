@@ -6,20 +6,17 @@ import MagicLink from '../adapters/tmp/tmp_MagicLink'
 import Mailer from '../adapters/tmp/tmp_Mailer'
 import UserRepository from '../adapters/tmp/tmp_UserRepository'
 
-
+const newUser = {
+    email:'teste@teste.com',
+    username:'user'
+}
 
 it('Should be possible to create a new user', async () => {
     new UserCollection().clear()
     const create = new CreateUser( new MagicLink, new Mailer, new UserRepository )
-    
-    const newUser = {
-        email:'teste@teste.com',
-        username:'user'
-    }
 
     expect( await create.handle(newUser))
-        
-    
+        .toEqual(newUser)
 }) 
 
 it('Should not be possible to create two accounts with the same email', async () => {
@@ -31,13 +28,8 @@ it('Should not be possible to create two accounts with the same email', async ()
         code: 400
     }]
 
-    const newUser = {
-        email:'teste@teste.com',
-        username:'user'
-    }
     await create.handle(newUser)
 
     expect( await create.handle(newUser))
     .toEqual(errorExpected)
-
 })

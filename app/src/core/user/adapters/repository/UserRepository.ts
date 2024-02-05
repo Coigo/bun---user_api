@@ -63,7 +63,7 @@ export default class UserRepository implements UsersRepository {
         
         await db.update(loginTokens)
             .set({ valid:'0' })
-            .where(eq(loginTokens.valid, token))
+            .where(eq(loginTokens.token, token))
 
         return token    
     } 
