@@ -7,7 +7,8 @@ import MagicLink from '../adapters/tmp/tmp_MagicLink'
 import Mailer from '../adapters/tmp/tmp_Mailer'
 import UserRepository from '../adapters/tmp/tmp_UserRepository'
 import Jwt from '../adapters/tmp/tmp_Jwt'
-import User from '../domain/User'
+import type User from '../domain/User'
+import  type { error } from '../../shared/Errors'
 
 
 const clearColection = new UserCollection().clear
@@ -25,8 +26,10 @@ it('Should be possible to login normally', async () => {
 
     await create.handle(newUser)
 
-    expect( await login.handle('556e2e8b-d7dd-489c-bd0c-d5fbee7c42bc') )
-        .toEqual('jwt')
+    const result = await login.handle('556e2e8b-d7dd-489c-bd0c-d5fbee7c42bc')
+
+    expect(result. jwt ).toEqual('jwt')
+    expect(result.errors).toEqual([])
 
 })
 
@@ -37,9 +40,17 @@ it('Shold not be possible to login with not created token', async () => {
     const login = new LoginUser(new Mailer, new UserRepository, new Jwt)
 
     await create.handle(newUser)
+    const result = await login.handle('666e2e8b-d7dd-489c-bd0c-d5fbee7c42bc')
 
-    expect( await login.handle('666e2e8b-d7dd-489c-bd0c-d5fbee7c42bc'))
-        .toBeUndefined()
+	const errorExpected: error[] = [
+		{
+            message: "Invalid Token",
+			code: 400,
+		},
+	];
+    
+    expect(result. jwt ).toBeUndefined()
+    expect(result.errors).toEqual(errorExpected)
 
 })
 
@@ -51,8 +62,18 @@ it('Should not be possible to login with a expired token', async () => {
 
     await create.handle(newUser)
 
-    expect( await login.handle('777e2e8b-d7dd-489c-bd0c-d5fbee7c42bc'))
-        .toBeUndefined()
+    const result = await login.handle('777e2e8b-d7dd-489c-bd0c-d5fbee7c42bc')
+
+
+	const errorExpected: error[] = [
+		{
+            message: "Invalid Token",
+			code: 400,
+		},
+	];
+    expect(result. jwt ).toBeUndefined()
+    expect(result.errors).toEqual(errorExpected);
+
 })
 
 it('Should not be possible to login two times with the same token', async () => {
@@ -64,6 +85,15 @@ it('Should not be possible to login two times with the same token', async () => 
     await create.handle(newUser)
     await login.handle('556e2e8b-d7dd-489c-bd0c-d5fbee7c42bc')
 
-    expect ( await login.handle('556e2e8b-d7dd-489c-bd0c-d5fbee7c42bc') )
-        .toBeUndefined()    
+    const result = await login.handle('556e2e8b-d7dd-489c-bd0c-d5fbee7c42bc') 
+
+    const errorExpected: error[] = [
+		{
+            message: "Invalid Token",
+			code: 400,
+		},
+	];
+
+    expect( result.jwt ).toBeUndefined()
+    expect(result.errors).toEqual(errorExpected)
 })

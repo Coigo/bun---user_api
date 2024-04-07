@@ -1,5 +1,5 @@
 import Elysia from "elysia";
-import routes from "./routes";
+import routes from "./core/user/adapters/controller/UserController";
 
 const app = new Elysia()
 
