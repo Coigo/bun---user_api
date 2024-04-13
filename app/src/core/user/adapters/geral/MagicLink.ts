@@ -1,5 +1,5 @@
 import UseCase from "../../../shared/UseCase";
-import { IMagicLink } from "../../domain/MagicLink";
+import type { IMagicLink } from "../../domain/MagicLink";
 import User from "../../domain/User";
 
 

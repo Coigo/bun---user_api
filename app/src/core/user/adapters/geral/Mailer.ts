@@ -1,7 +1,7 @@
 
 import { Resend } from 'resend'
 import dotenv from 'dotenv'
-import { MailerProvider, mailRequest } from "../../domain/Mailer";
+import type { MailerProvider, mailRequest } from "../../domain/Mailer";
 
 
 dotenv.config()
@@ -18,11 +18,11 @@ export default class Mailer implements MailerProvider {
             from: 'onboarding@resend.dev',
             to: address,
             subject: 'no-reply',
-            html: `<h1>oiiiiiiiii<h1/>`
-            }).then((result: any) => {
+            html: `<h1>oiiiiiiiii<h1/>${'aaa'}`
+            }).then((result: unknown) => {
                 console.log(result)
             }).
-            catch((err: any) => {
+            catch((err: unknown) => {
                 return false
             })
             return true
@@ -45,6 +45,7 @@ export default class Mailer implements MailerProvider {
         catch((err: any) => {
             return false
         })
+        
         return true
 
 }

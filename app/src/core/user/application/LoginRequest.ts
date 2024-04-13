@@ -25,6 +25,8 @@ export default class LoginRequest
 	public async handle(
 		email: string,
 	): Promise<{ user: User | undefined; errors: error[] }> {
+		console.log('ping');
+		
 		const { user, errors } = await this.findUser(email);
 		if (!user) {
 			return {

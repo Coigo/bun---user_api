@@ -44,6 +44,8 @@ routes.post(
 			new Mailer(),
 			new UserRepository(),
 		);
+		console.log('bateu');
+		
 		const { user, errors } = await request.handle(email);
 		if (errors[0]) {
 			set.status = errors[0].code;
