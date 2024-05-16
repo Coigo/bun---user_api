@@ -10,9 +10,9 @@ dotenv.config()
 export default class Mailer implements MailerProvider {
 
     public async mail ({address}: mailRequest) {
-            const KEY = process.env.resend_key
+            const key = process.env.resendKey
 
-            const resend = new Resend(KEY)
+            const resend = new Resend(key)
 
             resend.emails.send({
             from: 'onboarding@resend.dev',
@@ -29,20 +29,20 @@ export default class Mailer implements MailerProvider {
             
     }
 
-    public async mailMagicLink ({address, link}: mailRequest) {
-        const KEY = process.env.resend_key
+    public async mailMagicLink ({address, passKey}: mailRequest) {
+        const key = process.env.resendKey
 
-        const resend = new Resend(KEY)
+        const resend = new Resend(key)
 
         resend.emails.send({
         from: 'onboarding@resend.dev',
         to: address,
         subject: 'no-reply',
-        html: `<h1>${link}<h1/>`
-        }).then((result: any) => {
+        html: `<h1>${passKey}<h1/>`
+        }).then((result: unknown) => {
             console.log(result)
         }).
-        catch((err: any) => {
+        catch((err: unknown) => {
             return false
         })
         

@@ -4,6 +4,8 @@
   "scripts": {
     "test": "vitest",
     "dev": "clear | bun run --watch src/index.ts ",
+    "start": "clear | bun run src/index.ts ",
+    "log": "bun run src/test.ts",
     "migration:generate": "drizzle-kit generate:pg --schema=./src/infrastructure/schema/schema.ts",
     "migration:push": "bun run ./src/infrastructure/migrate"
   },
@@ -18,7 +20,8 @@
     "jsonwebtoken": "^9.0.2",
     "nodemailer": "^6.9.8",
     "pg": "^8.11.3",
-    "postgres": "^3.4.3"
+    "postgres": "^3.4.3",
+    "resend": "^3.2.0"
   },
   "devDependencies": {
     "@biomejs/biome": "1.4.1",

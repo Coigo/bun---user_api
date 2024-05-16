@@ -1,6 +1,6 @@
 {
-  "id": "4afc382f-3750-4de6-93e7-e714b5cb87c1",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "a6cfed3c-00b2-42c3-ac20-3d8e8251015e",
+  "prevId": "b378c7e5-6097-4463-a957-20a6c759f3b0",
   "version": "5",
   "dialect": "pg",
   "tables": {
@@ -8,10 +8,16 @@
       "name": "login_tokens",
       "schema": "",
       "columns": {
-        "uuid": {
-          "name": "uuid",
-          "type": "uuid",
+        "id": {
+          "name": "id",
+          "type": "serial",
           "primaryKey": true,
+          "notNull": true
+        },
+        "pass_key": {
+          "name": "pass_key",
+          "type": "numeric",
+          "primaryKey": false,
           "notNull": true
         },
         "email": {

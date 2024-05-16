@@ -1,6 +1,6 @@
 import type { error } from "../../shared/Errors";
 import type UseCase from "../../shared/UseCase";
-import type { IMagicLink } from "../domain/MagicLink";
+import type { IPassKey } from "../domain/PassKey";
 import type { MailerProvider } from "../domain/Mailer";
 import type User from "../domain/User";
 import type { UsersRepository } from "../domain/UsersRepository";
@@ -9,24 +9,22 @@ export default class LoginRequest
 	implements UseCase<string, { user: User | undefined; errors: error[] }>
 {
 	private mailer;
-	private magicLink;
+	private passKey;
 	private userRepository;
 
 	constructor(
-		magicLink: IMagicLink,
+		passKey: IPassKey,
 		mailer: MailerProvider,
 		userRepository: UsersRepository,
 	) {
-		this.magicLink = magicLink;
+		this.passKey = passKey;
 		this.mailer = mailer;
 		this.userRepository = userRepository;
 	}
 
-	public async handle(
-		email: string,
-	): Promise<{ user: User | undefined; errors: error[] }> {
-		console.log('ping');
-		
+	public async handle( email: string): Promise<{ user: User | undefined; errors: error[] }> {
+		console.log(email);
+
 		const { user, errors } = await this.findUser(email);
 		if (!user) {
 			return {
@@ -34,12 +32,11 @@ export default class LoginRequest
 				errors,
 			};
 		}
-		const token = this.magicLink.generateUUID();
-		const saveToken = await this.userRepository.saveToken({ email, token });
-
+		const passKey = this.passKey.generateKey();
+		const saveToken = await this.userRepository.saveToken({ email, passKey });
 		const mail = await this.mailer.mailMagicLink({
 			address: user.email,
-			link: `${process.env.suve_url}/login/${token}`,
+			passKey,
 		});
 
 		return { user, errors };

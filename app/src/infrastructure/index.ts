@@ -5,7 +5,7 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-if (
+if (  
     !process.env.DB_NAME ||
     !process.env.DB_USER ||
     !process.env.DB_PASSWORD ||
@@ -15,6 +15,13 @@ if (
     throw new Error('some database params are missing')
 }
 
+console.log(process.env.DB_NAME
+  ," ",process.env.DB_USER
+  ," ",process.env.DB_PASSWORD
+  ," ",process.env.DB_PORT
+  ," ",process.env.DB_HOST);
+
+
 const client = new Client({
   host: process.env.DB_HOST,
   port: Number(process.env.DB_PORT),
@@ -23,5 +30,9 @@ const client = new Client({
   database: process.env.DB_NAME,
 });
 
+
 await client.connect();
+
+
+
 export const db = drizzle(client, {schema});

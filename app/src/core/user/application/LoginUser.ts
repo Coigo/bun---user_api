@@ -7,12 +7,12 @@ import UserCollection from "../adapters/tmp/tmp_UserRepository";
 import type { MailerProvider } from "../domain/Mailer";
 import dotenv from "dotenv";
 import type { JwtProvider } from "../domain/Jwt";
-import type { TokenType } from "../domain/MagicLink";
+import type { LoginType, TokenType } from "../domain/PassKey";
 
 dotenv.config();
 
 export default class LoginUser
-	implements UseCase<string, { jwt: string | undefined; errors: error[] }>
+	implements UseCase<LoginType, { jwt: string | undefined;  user: User| undefined; errors: error[] }>
 {
 	private mailer;
 	private jwt;
@@ -36,6 +36,7 @@ export default class LoginUser
 			},
 		],
 		jwt: undefined,
+		user:undefined
 	};
 	private notFoundUserResponse = {
 		errors: [
@@ -45,13 +46,15 @@ export default class LoginUser
 			},
 		],
 		jwt: undefined,
+		user:undefined
 	};
 
 	async handle(
-		token: string,
-	): Promise<{ jwt: string | undefined; errors: error[] }> {
+		{passKey, email}: LoginType,
+	): Promise<{ jwt: string | undefined;  user: User| undefined; errors: error[] }> {
 		try {
-			const findToken = await this.usersRepository.findToken(token);
+
+			const findToken = await this.usersRepository.findToken({passKey, email});
 
 			if (!findToken) return this.notFoundTokenResponse;
             const { valid, errors } = this.isTokenValid(findToken);
@@ -60,15 +63,16 @@ export default class LoginUser
                 const user = await this.usersRepository.findByEmail(findToken.email);
                 if (!user) return this.notFoundTokenResponse;
     
-                this.usersRepository.deleteUsedToken(token);
+                this.usersRepository.deleteUsedToken(findToken.id);
                 const jwt = this.jwt.sign(user);
                 return {
                     errors,
                     jwt,
+					user
                 };
             }
             return {
-                errors, jwt: undefined
+                errors, jwt: undefined, user: undefined
             }
 
 		} catch (err) {
@@ -80,6 +84,8 @@ export default class LoginUser
 					},
 				],
 				jwt: undefined,
+				user:undefined
+
 			};
 		}
 	}
@@ -87,7 +93,7 @@ export default class LoginUser
 	private isTokenValid(tokenDTO: TokenType) {
 		const errors: error[] = [];
 
-		if (!tokenDTO || !tokenDTO.createdAt || !tokenDTO.token) {
+		if (!tokenDTO || !tokenDTO.createdAt || !tokenDTO.passKey) {
 			errors.push({
 				code: 400,
 				message: "Token not found",
@@ -119,7 +125,7 @@ export default class LoginUser
 
 		const tokenBirth = new Date(createdAt);
 		const minuteDiff = (now.getTime() - tokenBirth.getTime()) / 1000 / 60;
-
+		
 		const tokenMaxLife = Number(process.env.token_max_life);
 		if (minuteDiff > tokenMaxLife) return false;
 

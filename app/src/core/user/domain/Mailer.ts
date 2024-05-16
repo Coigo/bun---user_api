@@ -1,10 +1,10 @@
 
 export type mailRequest = {
     address: string,
-    link:string 
+    passKey:string 
 }
 
 export interface MailerProvider {
     mail: ({ address }: mailRequest ) => Promise<boolean>
-    mailMagicLink: ({ address, link }: mailRequest ) => Promise<boolean>
+    mailMagicLink: ({ address, passKey }: mailRequest ) => Promise<boolean>
 }

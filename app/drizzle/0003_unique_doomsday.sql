@@ -1,0 +1,1 @@
+ALTER TABLE "login_tokens" ADD COLUMN "pass_key" numeric NOT NULL;

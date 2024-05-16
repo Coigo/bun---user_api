@@ -2,7 +2,7 @@ import { validate } from "../../../../util";
 import CreateUser from "../../application/CreateUser";
 import LoginUser from "../../application/LoginUser";
 import type User from "../../domain/User";
-import MagicLink from "../geral/MagicLink";
+import MagicLink from "../geral/PassKey";
 import Jwt from "../geral/Jwt";
 import Mailer from "../geral/Mailer";
 import UserRepository from "../repository/UserRepository";
@@ -14,19 +14,24 @@ const routes = new Elysia();
 routes.post(
 	"/create",
 	async ({ body, set }) => {
+		console.log('recebido');
+		
 		const createUser = new CreateUser(
 			new MagicLink(),
 			new Mailer(),
 			new UserRepository(),
-		);
+		); 		
 		const { user, errors } = await createUser.handle(body);
 		if (errors[0]) {
+			console.log(errors);
+			
 			set.status = errors[0].code;
 			return {
 				errors,
 			};
 		}
-		return user;
+		console.log('certo');
+		return {user};
 	},
 	{
 		body: t.Object({
@@ -53,7 +58,7 @@ routes.post(
 				errors,
 			};
 		}
-		return user;
+		return {user};
 	},
 	{
 		body: t.Object({
@@ -65,19 +70,26 @@ routes.post(
 routes.post(
 	"/login",
 	async ({ body: { token }, set }) => {
+		console.log('pediu login');
+		
 		const login = new LoginUser(new Mailer(), new UserRepository(), new Jwt());
-		const { jwt, errors } = await login.handle(token);
+		const { jwt, errors, user } = await login.handle(token);
 		if (errors[0]) {
+			console.log('deu ruim ', errors);
 			set.status = errors[0].code;
 			return {
 				errors,
 			};
 		}
-		return jwt;
+		console.log('logado', jwt);
+		return {jwt, user};
 	},
 	{
 		body: t.Object({
-			token: t.String(),
+			token: t.Object({
+				passKey: t.String(),
+				email: t.String()
+			}),
 		}),
 	},
 );

@@ -2,7 +2,7 @@ import { expect, expectTypeOf, test, it } from "vitest";
 import CreateUser from "./CreateUser";
 import UserCollection from "../adapters/tmp/tmp_UserRepository";
 import type { error } from "../../shared/Errors";
-import MagicLink from "../adapters/tmp/tmp_MagicLink";
+import PassKey from "../adapters/tmp/tmp_PassKey";
 import Mailer from "../adapters/tmp/tmp_Mailer";
 import UserRepository from "../adapters/tmp/tmp_UserRepository";
 
@@ -14,7 +14,7 @@ const newUser = {
 it("Should be possible to create a new user", async () => {
 	new UserCollection().clear();
 	const create = new CreateUser(
-		new MagicLink(),
+		new PassKey(),
 		new Mailer(),
 		new UserRepository(),
 	);
@@ -28,7 +28,7 @@ it("Should be possible to create a new user", async () => {
 it("Should not be possible to create two accounts with the same email", async () => {
 	new UserCollection().clear();
 	const create = new CreateUser(
-		new MagicLink(),
+		new PassKey(),
 		new Mailer(),
 		new UserRepository(),
 	);

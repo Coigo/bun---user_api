@@ -6,7 +6,7 @@ export default class Mailer implements MailerProvider {
         return true
     }
 
-    public async mailMagicLink ({ address, link }: mailRequest) {
+    public async mailMagicLink ({ address, passKey }: mailRequest) {
         return true
     }
 

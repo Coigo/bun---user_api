@@ -1,7 +1,7 @@
 import { expect, it } from "vitest";
 import LoginRequest from "./LoginRequest";
 import CreateUser from "./CreateUser";
-import MagicLink from "../adapters/tmp/tmp_MagicLink";
+import PassKey from "../adapters/tmp/tmp_PassKey";
 import Mailer from "../adapters/tmp/tmp_Mailer";
 import UserRepository from "../adapters/tmp/tmp_UserRepository";
 import type { error } from "../../shared/Errors";
@@ -13,8 +13,8 @@ const newUser = {
 
 it('Should be possible to make a login request', async () => {
 
-    const create = new CreateUser( new MagicLink, new Mailer, new UserRepository )
-    const loginRequest = new LoginRequest(new MagicLink, new Mailer, new UserRepository)
+    const create = new CreateUser( new PassKey, new Mailer, new UserRepository )
+    const loginRequest = new LoginRequest(new PassKey, new Mailer, new UserRepository)
 
     await create.handle(newUser)
     
@@ -27,8 +27,8 @@ it('Should be possible to make a login request', async () => {
 
 it('Should not be possible to make a login request with no account registred', async () => {
 
-    const create = new CreateUser( new MagicLink, new Mailer, new UserRepository )
-    const loginRequest = new LoginRequest(new MagicLink, new Mailer, new UserRepository)
+    const create = new CreateUser( new PassKey, new Mailer, new UserRepository )
+    const loginRequest = new LoginRequest(new PassKey, new Mailer, new UserRepository)
 
     const errors: error[] = [{
         code: 400,

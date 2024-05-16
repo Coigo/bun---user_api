@@ -9,7 +9,8 @@ export const users = pgTable('users', {
 })
 
 export const loginTokens = pgTable('login_tokens', {
-    token: uuid('uuid').primaryKey().notNull(),
+    id:serial('id').primaryKey().notNull(),
+    passKey:numeric('pass_key').notNull(),
     email: varchar('email').notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     valid: numeric('valid').default('1').notNull()

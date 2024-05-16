@@ -6,8 +6,7 @@ import UserCollection from "../adapters/tmp/tmp_UserRepository";
 import type { error } from "../../shared/Errors";
 import type { MailerProvider } from "../domain/Mailer";
 import dotenv from "dotenv";
-import MagicLink from "../adapters/tmp/tmp_MagicLink";
-import type { IMagicLink } from "../domain/MagicLink";
+import type { IPassKey } from "../domain/PassKey";
 
 dotenv.config();
 
@@ -15,17 +14,17 @@ export default class CreateUser
 	implements UseCase<Required<User>, { user: User; errors: error[] }>
 {
 	private mailer: MailerProvider;
-	private magicLink: IMagicLink;
+	private magicNumber: IPassKey;
 	private usersCollection: UsersRepository;
 
 	constructor(
-		magicLink: IMagicLink,
+		magicNumber: IPassKey,
 		mailer: MailerProvider,
 		usersCollection: UsersRepository,
 	) {
 		this.mailer = mailer;
 		this.usersCollection = usersCollection;
-		this.magicLink = magicLink;
+		this.magicNumber = magicNumber;
 	}
 
 	public async handle(
@@ -35,15 +34,15 @@ export default class CreateUser
 
 		if (valid) {
 			await this.usersCollection.create(user);
-			const token = this.magicLink.generateUUID();
+			const passKey = this.magicNumber.generateKey();
 
 			await this.usersCollection.saveToken({
 				email: user.email,
-				token: token,
+				passKey
 			});
 			await this.mailer.mailMagicLink({
 				address: user.email,
-				link: `${process.env.suve_url}/login/${token}`,
+				passKey
 			});
 		}
 		return { user, errors };
@@ -53,7 +52,10 @@ export default class CreateUser
 		const errors: error[] = [];
 		const { email } = newUser;
 
-		if (await this.usersCollection.findByEmail(email)) {
+		const findEmail = await this.usersCollection.findByEmail(email)
+		console.log(findEmail);
+		
+		if (findEmail) {
 			errors.push({
 				message: "Email já utilizado.",
 				code: 400,

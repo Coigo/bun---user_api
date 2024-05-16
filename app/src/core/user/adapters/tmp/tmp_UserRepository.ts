@@ -1,4 +1,4 @@
-import { TokenType } from "../../domain/MagicLink";
+import { LoginType, TokenType } from "../../domain/PassKey";
 import User from "../../domain/User";
 import { UsersRepository, saveTokenType } from "../../domain/UsersRepository";
 import dotenv from 'dotenv'
@@ -10,9 +10,10 @@ export default class UserRepository implements UsersRepository{
     static readonly users: User[] = []
     static readonly tokens: TokenType[] = [
         {
+            id:2,
             createdAt: UserRepository.createExpiredToken(),
             email: 'notValid@test.com',
-            token: '777e2e8b-d7dd-489c-bd0c-d5fbee7c42bc',
+            passKey: '654321',
             valid: 1
         }
     ]
@@ -26,31 +27,30 @@ export default class UserRepository implements UsersRepository{
         return UserRepository.users.find(user => user.email === email)
     }
 
-    async findToken ( token: string ): Promise<TokenType | undefined> {
-        const result = await UserRepository.tokens.find(aToken => aToken.token === token)
-        console.log(result);
+    async findToken ({passKey, email}: LoginType ): Promise<TokenType | undefined> {
+        const result = await UserRepository.tokens.find(aToken => aToken.passKey === passKey && aToken.email === email)
         return result
     }
 
-    public async saveToken ({ email, token }: saveTokenType) {
+    public async saveToken ({ email, passKey }: saveTokenType) {
         UserRepository.tokens.push({ 
+            id:1,
             email, 
-            token,
+            passKey,
             createdAt: new Date(),
             valid: 1
         })
-        console.log(UserRepository.tokens);
-        return { email, token }
+        return { email, passKey }
     }
 
-    public async deleteUsedToken (token: string) {
-        const toDelete = UserRepository.tokens.find(aToken => aToken.token === token)
+    public async deleteUsedToken (tokenId: number) {
+        const toDelete = UserRepository.tokens.find(aToken => aToken.id === tokenId)
         if ( !toDelete ) {
             return
         }
         const index = UserRepository.tokens.indexOf(toDelete)
         UserRepository.tokens[index].valid = 0
-        return token
+        return tokenId
     } 
 
 
