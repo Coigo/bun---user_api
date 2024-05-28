@@ -17,5 +17,5 @@ ENV DB_URL="postgres://postgres:postgres@postgres:5432/SUVE"
 ENV resendKey="re_REZCRmNN_56BaLNburq14pDRo1HpLCGDe"
 EXPOSE 3003
 
-CMD [ "bun", "log" ]
-# CMD [ "bun", "start" ]
+# CMD [ "bun", "log" ]
+CMD [ "bun", "start" ]
