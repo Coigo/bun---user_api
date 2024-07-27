@@ -42,7 +42,7 @@ routes.post(
 );
 
 routes.post(
-	"login_request",
+	"/login_request",
 	async ({ body: { email }, set }) => {
 		const request = new LoginRequest(
 			new MagicLink(),

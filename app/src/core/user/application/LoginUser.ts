@@ -53,7 +53,7 @@ export default class LoginUser
 		{passKey, email}: LoginType,
 	): Promise<{ jwt: string | undefined;  user: User| undefined; errors: error[] }> {
 		try {
-
+			const JWT_SECRET = process.env.JWT_SECRET as string
 			const findToken = await this.usersRepository.findToken({passKey, email});
 
 			if (!findToken) return this.notFoundTokenResponse;
@@ -64,7 +64,7 @@ export default class LoginUser
                 if (!user) return this.notFoundTokenResponse;
     
                 this.usersRepository.deleteUsedToken(findToken.id);
-                const jwt = this.jwt.sign(user);
+                const jwt = this.jwt.sign(user, JWT_SECRET);
                 return {
                     errors,
                     jwt,

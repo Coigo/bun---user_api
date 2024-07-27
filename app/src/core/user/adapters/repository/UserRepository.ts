@@ -21,6 +21,7 @@ export default class UserRepository implements UsersRepository {
     public async findByEmail (email: string) {
         const user = await db.select(
             {
+                id: users.id,
                 email: users.email,
                 username:users.username
             }
