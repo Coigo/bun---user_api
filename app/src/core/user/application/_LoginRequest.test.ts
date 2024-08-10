@@ -19,9 +19,12 @@ it('Should be possible to make a login request', async () => {
     await create.handle(newUser)
     
     const result = await loginRequest.handle(newUser.email)
-
+    console.log(result);
     expect( result.errors ).toEqual([])
-    expect(result.user).toEqual(newUser)
+    expect(result.user).toEqual({
+        ...newUser, 
+        id: 1
+    })
 
 })
 

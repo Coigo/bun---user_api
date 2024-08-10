@@ -8,11 +8,15 @@ export type saveTokenType = {
 
 
 export interface UsersRepository {
-    create: (newUser:Required<User>) => Promise<User>
-    findByEmail: (email:string) => Promise< User| undefined >
-    saveToken: ({email, passKey}: saveTokenType ) => Promise<saveTokenType | undefined>
-    findToken: ({passKey, email}: LoginType) => Promise< TokenType | undefined >
-    deleteUsedToken: (id:number) => Promise< number | undefined>
+    create: ( newUser: User ) => Promise<User>
+
+    findByEmail: ( email: string ) => Promise< User| undefined >
+
+    saveToken: ({ email, passKey }: saveTokenType ) => Promise<saveTokenType | undefined>
+    
+    findToken: ({ passKey, email }: LoginType) => Promise< TokenType | undefined >
+    
+    deleteUsedToken: (id: number) => Promise< number | undefined>
 
     clear?:() => void
     createExpiredToken?:() => Date

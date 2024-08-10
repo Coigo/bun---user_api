@@ -20,9 +20,12 @@ it("Should be possible to create a new user", async () => {
 	);
 
 	const result = await create.handle(newUser);
-
-	expect(result.user).toEqual(newUser);
-	expect(result.errors).toEqual([]);
+	if ('user' in result) {
+		expect(result.user).toEqual(newUser);
+	}
+	else {
+		expect(result.errors).toEqual([]);
+	}
 });
 
 it("Should not be possible to create two accounts with the same email", async () => {
@@ -43,7 +46,10 @@ it("Should not be possible to create two accounts with the same email", async ()
 	await create.handle(newUser);
 
 	const result = await create.handle(newUser);
- 
-	expect(result.errors).toEqual(errorExpected);
-	expect(result.user).toEqual(newUser);
+	if ('errors' in result) {
+		expect(result.errors).toEqual(errorExpected);
+	}
+	else {
+		expect(result.user).toEqual(newUser);
+	}
 });

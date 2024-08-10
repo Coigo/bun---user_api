@@ -7,11 +7,19 @@ import type { error } from "../../shared/Errors";
 import type { MailerProvider } from "../domain/Mailer";
 import dotenv from "dotenv";
 import type { IPassKey } from "../domain/PassKey";
+import { users } from "../../../infrastructure/schema/schema";
 
 dotenv.config();
 
+interface ResponseUser {
+	user: User
+}
+interface ResponseError {
+	errors: error[]
+}
+
 export default class CreateUser
-	implements UseCase<Required<User>, { user: User; errors: error[] }>
+	implements UseCase<User, ResponseUser | ResponseError>
 {
 	private mailer: MailerProvider;
 	private magicNumber: IPassKey;
@@ -27,13 +35,11 @@ export default class CreateUser
 		this.magicNumber = magicNumber;
 	}
 
-	public async handle(
-		user: Required<User>,
-	): Promise<{ user: User; errors: error[] }> {
+	public async handle( user: User): Promise<ResponseUser | ResponseError> {
 		const { valid, errors } = await this.validateNewUser(user);
 
 		if (valid) {
-			await this.usersCollection.create(user);
+			const createdUser = await this.usersCollection.create(user);
 			const passKey = this.magicNumber.generateKey();
 
 			await this.usersCollection.saveToken({
@@ -44,16 +50,17 @@ export default class CreateUser
 				address: user.email,
 				passKey
 			});
+			return { user: createdUser }
 		}
-		return { user, errors };
+
+		return { errors };
 	}
 
-	private async validateNewUser(newUser: Required<User>) {
+	private async validateNewUser(newUser: User) {
 		const errors: error[] = [];
 		const { email } = newUser;
 
 		const findEmail = await this.usersCollection.findByEmail(email)
-		console.log(findEmail);
 		
 		if (findEmail) {
 			errors.push({

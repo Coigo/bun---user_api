@@ -10,7 +10,7 @@ export default class UserRepository implements UsersRepository{
     static readonly users: User[] = []
     static readonly tokens: TokenType[] = [
         {
-            id:2,
+            id: 2,
             createdAt: UserRepository.createExpiredToken(),
             email: 'notValid@test.com',
             passKey: '654321',
@@ -19,7 +19,10 @@ export default class UserRepository implements UsersRepository{
     ]
 
     async create ( newUser: User ): Promise<User> {
-        UserRepository.users.push(newUser)  
+        UserRepository.users.push({
+            ...newUser,
+            id: 1
+        })  
         return newUser
     }
 
@@ -34,7 +37,7 @@ export default class UserRepository implements UsersRepository{
 
     public async saveToken ({ email, passKey }: saveTokenType) {
         UserRepository.tokens.push({ 
-            id:1,
+            id: 1,
             email, 
             passKey,
             createdAt: new Date(),
