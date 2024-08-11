@@ -7,14 +7,15 @@ import { LoginType } from "../../domain/PassKey";
 
 export default class UserRepository implements UsersRepository {
     
-    public async create (newUser: Required<User>) {
+    public async create (newUser: User) {
         const {username, email } = newUser
 
-        await db.insert(users).values({
+        const [user] = await db.insert(users).values({
             username,
             email,
-        })
-        return newUser
+        }).returning()
+
+        return user
     }
 
 

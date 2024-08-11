@@ -40,6 +40,8 @@ export default class CreateUser
 
 		if (valid) {
 			const createdUser = await this.usersCollection.create(user);
+			console.log("O usuario foi criado aqui o", createdUser);
+			
 			const passKey = this.magicNumber.generateKey();
 
 			await this.usersCollection.saveToken({
