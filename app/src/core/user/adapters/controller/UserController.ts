@@ -15,23 +15,24 @@ routes.post(
 	"/create",
 	async ({ body, set }) => {
 		console.log('recebido');
-		
+
 		const createUser = new CreateUser(
 			new MagicLink(),
 			new Mailer(),
 			new UserRepository(),
-		); 		
-		const { user, errors } = await createUser.handle(body);
-		if (errors[0]) {
-			console.log(errors);
-			
-			set.status = errors[0].code;
+		);
+		const create = await createUser.handle(body);
+		if ('errors' in create) {
+			console.log(create.errors);
+
+			set.status = create.errors[0].code;
 			return {
-				errors,
+				errors: create.errors,
 			};
 		}
-		console.log('certo');
-		return {user};
+
+		return { user: create.user };
+
 	},
 	{
 		body: t.Object({
@@ -50,7 +51,7 @@ routes.post(
 			new UserRepository(),
 		);
 		console.log('bateu');
-		
+
 		const { user, errors } = await request.handle(email);
 		if (errors[0]) {
 			set.status = errors[0].code;
@@ -58,7 +59,7 @@ routes.post(
 				errors,
 			};
 		}
-		return {user};
+		return { user };
 	},
 	{
 		body: t.Object({
@@ -71,7 +72,7 @@ routes.post(
 	"/login",
 	async ({ body: { token }, set }) => {
 		console.log('pediu login');
-		
+
 		const login = new LoginUser(new Mailer(), new UserRepository(), new Jwt());
 		const { jwt, errors, user } = await login.handle(token);
 		if (errors[0]) {
@@ -82,7 +83,7 @@ routes.post(
 			};
 		}
 		console.log('logado', jwt);
-		return {jwt, user};
+		return { jwt, user };
 	},
 	{
 		body: t.Object({
